@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+
+  "name": "Chat",
+  "description": "This extension will allow you to chat with your friends.",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "assets/img/user.png",
+    "default_popup": "index.html"
+  },
+  "content_scripts": [ {
+    "js": [ "assets/lib/angular.min.js", "assets/lib/angularfire.min.js", "assets/lib/angular-route.min.js", "assets/lib/firebase.js", "assets/js/content.js"],
+    "matches": [ "*://*/*" ],
+    "run_at": "document_start"
+  } ],
+  "permissions": [ "http://*/*", "https://*/*", "unlimitedStorage", "contextMenus", "cookies", "tabs", "notifications" ]
+}

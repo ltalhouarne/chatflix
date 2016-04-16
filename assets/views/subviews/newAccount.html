@@ -1,0 +1,21 @@
+<div class="panel panel-info">
+    <div class="panel-heading" style="color: white; font-weight: 100;">
+        Chatflix
+    </div>
+    <div class="panel-body">
+        <form>
+            <div class="form-group">
+                <label for="createAccountEmail">Email address</label>
+                <input type="email" class="form-control" id="createAccountEmail" placeholder="Email"
+                       ng-model="user.new.email">
+            </div>
+            <div class="form-group">
+                <label for="createAccountPassword">Password</label>
+                <input type="password" class="form-control" id="createAccountPassword" placeholder="Password"
+                       ng-model="user.new.password">
+            </div>
+            <button type="submit" ng-click="create(user)" class="btn btn-default">Create account</button>
+            <button type="submit" ng-click="cancel()" class="btn btn-default">Cancel</button>
+        </form>
+    </div>
+</div>

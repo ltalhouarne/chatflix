@@ -4,6 +4,10 @@
     </div>
     <div class="panel-body">
         <form>
+            <div id="mydiv" ng-show="loading" class="text-center">
+                <img src="assets/img/box.gif"/>
+            </div>
+            <span style="color: darkred" ng-show="error">Email already associated to an account.</span>
             <div class="form-group">
                 <label for="createAccountEmail">Email address</label>
                 <input type="email" class="form-control" id="createAccountEmail" placeholder="Email"
@@ -16,6 +20,10 @@
             </div>
             <button type="submit" ng-click="create(user)" class="btn btn-default">Create account</button>
             <button type="submit" ng-click="cancel()" class="btn btn-default">Cancel</button>
+            <br>
+            <br>
+            <i style="font-size: 60%">By clicking Create Account, you agree to our Terms and that you have read our Data
+                Policy, including our Cookie Use.</i>
         </form>
     </div>
 </div>

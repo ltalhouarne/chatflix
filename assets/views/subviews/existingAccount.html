@@ -4,6 +4,10 @@
     </div>
     <div class="panel-body">
         <form>
+            <div id="mydiv" ng-show="loading" class="text-center">
+                <img src="assets/img/box.gif"/>
+            </div>
+            <span style="color: darkred" ng-show="error">Invalid credentials</span>
             <div class="form-group">
                 <label for="existingEmail">Email address</label>
                 <input type="email" class="form-control" id="existingEmail" placeholder="Email"
@@ -13,9 +17,12 @@
                 <label for="existingPassword">Password</label>
                 <input type="password" class="form-control" id="existingPassword" placeholder="Password"
                        ng-model="user.existing.password">
+                <br>
+                <a ng-click="forgotPassword()"><i>Forgot password?</i></a>
             </div>
             <button type="submit" ng-click="login(user)" class="btn btn-default">Login</button>
             <button type="submit" ng-click="cancel()" class="btn btn-default">Cancel</button>
+
         </form>
     </div>
 </div>

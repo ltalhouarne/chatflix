@@ -4,9 +4,9 @@
   "name": "Chat",
   "description": "This extension will allow you to chat with your friends.",
   "version": "1.0",
-
+  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'",
   "browser_action": {
-    "default_icon": "assets/img/user.png",
+    "default_icon": "assets/img/icon.png",
     "default_popup": "index.html"
   },
   "content_scripts": [ {

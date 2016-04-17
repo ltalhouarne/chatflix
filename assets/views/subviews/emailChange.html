@@ -1,0 +1,26 @@
+<div class="panel panel-info">
+    <div class="panel-heading" style="color: white; font-weight: 100;">
+        Chatflix
+    </div>
+    <div class="panel-body">
+        <form>
+            <div class="form-group">
+                <label for="existingEmailChange">Old Email address</label>
+                <input type="email" class="form-control" id="existingEmailChange" placeholder="Email"
+                       ng-model="user.emailChange.email">
+            </div>
+            <div class="form-group">
+                <label for="newEmailChange">New Email address</label>
+                <input type="email" class="form-control" id="newEmailChange" placeholder="Email"
+                       ng-model="user.emailChange.newEmail">
+            </div>
+            <div class="form-group">
+                <label for="emailChangeExistingPassword">Password</label>
+                <input type="password" class="form-control" id="emailChangeExistingPassword" placeholder="Password"
+                       ng-model="user.emailChange.password">
+            </div>
+            <button type="submit" ng-click="changeEmail(user)" class="btn btn-default">Reset Email</button>
+            <button type="submit" ng-click="cancel()" class="btn btn-default">Cancel</button>
+        </form>
+    </div>
+</div>

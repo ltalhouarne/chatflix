@@ -1,0 +1,80 @@
+<div class="panel panel-info">
+    <div class="panel-heading" style="color: white; font-weight: 100;">
+        Chatflix
+        <span style="float:right;">
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="addFriend()" class="fa fa-user-plus" aria-hidden="true"></i></a>
+            &nbsp;&nbsp;
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="goToChat()" style="padding-bottom: 3px; border-bottom: 1px solid white;" class="fa fa-weixin" aria-hidden="true"></i></a>
+            &nbsp;&nbsp;
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="goToFriends()" class="fa fa-users" aria-hidden="true"></i></a>
+            &nbsp;&nbsp;
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="settings()" class="fa fa-cog" aria-hidden="true"></i></a>
+            &nbsp;&nbsp;
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="logout()" class="fa fa-sign-out" aria-hidden="true"></i></a>
+        </span>
+    </div>
+    <div class="panel-body"
+         style="max-height:300px; word-break:break-all; padding-top: 0px !important; overflow-y: auto;" scroll-glue>
+        <ul class="media-list">
+            <div ng-show="loading" class="text-center">
+                <img src="assets/img/box.gif"/>
+            </div>
+            <span ng-repeat="data in result" style="font-family:Verdana;">
+                    <li class="media" style="margin-top: 10px;" >
+                        <div class="media-body">
+                        <div class="media">
+                        <a class="pull-left">
+                            <img class="media-object img-circle" style="width: 30px;"
+                                 ng-src="{{data.profilePic}}"/>
+                        </a>
+                        <div class="media-body" style="font-size: 80%;">
+                            <b>{{data.username}}</b>
+                            <br/>
+                            <small class="text-muted"><i class="fa fa-circle" aria-hidden="true" style="color: #0C0;">
+                            </i> Watching: {{data.friend.watching}}
+                            </small>
+                        </div>
+                            <button ng-click="goToChat()" class="btn btn-default pull-right" style="margin-top: -30px;"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                    <hr>
+
+                        </div>
+                </div>
+            </li>
+            </span>
+
+            <li class="media" ng-repeat="(key, data) in conversations" style="font-family:Verdana; margin-top: -10px;" >
+                <div class="media-body" ng-repeat="convo in data" >
+                    <div class="media" ng-show="convo.value">
+                        <a class="pull-left" ng-show="convo.self">
+                            <img class="media-object img-circle" style="width: 30px; margin-bottom: 5px;" ng-src="{{profilePicS}}"/>
+                        </a>
+                        <div class="media-body" style="font-size: 80%;" ng-show="convo.self">
+                            {{convo.value}}
+                            <br/>
+                            <small class="text-muted">{{convo.timestamp}}</small>
+                        </div>
+
+                        <span class="pull-right">
+                            <div style="font-size: 80%; margin-right:5px; float:left;" ng-show="!convo.self">
+                                {{convo.value}}
+                                <br/>
+                                <small class="text-muted">{{convo.timestamp}}</small>
+                            </div>
+                            <div class="media-body" ng-show="!convo.self" style="float:right">
+                                <img class="media-object img-circle" style="width: 30px; margin-bottom: 5px;" ng-src="{{profilePicNS}}"/>
+                            </div>
+                        </span>
+
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <span id="bottom"></span>
+    </div>
+    <div class="panel-footer" d>
+        <form ng-submit="sendMessage()">
+            <input ng-model="message.content" type="text" class="form-control" style="witdh: auto; font-size: 80%"
+                   placeholder="..." autofocus/>
+        </form>
+    </div>
+</div>

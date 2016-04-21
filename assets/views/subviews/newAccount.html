@@ -1,5 +1,5 @@
 <div class="panel panel-info">
-    <div class="panel-heading" style="color: white; font-weight: 100;">
+    <div class="panel-heading" style="color: white; font-weight: 100; margin-bottom: 5px;"">
         Chatflix
     </div>
     <div class="panel-body">
@@ -18,6 +18,12 @@
                 <input type="password" class="form-control" id="createAccountPassword" placeholder="Password"
                        ng-model="user.new.password">
             </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="username"
+                       ng-model="user.new.username">
+            </div>
+
             <button type="submit" ng-click="create(user)" class="btn btn-default">Create account</button>
             <button type="submit" ng-click="cancel()" class="btn btn-default">Cancel</button>
             <br>

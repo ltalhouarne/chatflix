@@ -1,12 +1,19 @@
 <div class="panel panel-info">
-    <div class="panel-heading" style="color: white; font-weight: 100;">
-        Chatflix<span style="float:right"><i ng-click="addFriend()" class="fa fa-user-plus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<i
-            ng-click="goToChat()" class="fa fa-weixin" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;<i
-            ng-click="goToFriends()" class="fa fa-users" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;<i
-            ng-click="settings()" style="padding-bottom: 3px; border-bottom: 3px dotted white;" class="fa fa-cog"
-            aria-hidden="true"></i>
-&nbsp;&nbsp;&nbsp;&nbsp;<i ng-click="logout()" class="fa fa-sign-out" aria-hidden="true"></i></span>
+    <div class="panel-heading" style="color: white; font-weight: 100; margin-bottom: 5px;"">
+        Chatflix
+        <span style="float:right;">
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="addFriend()" class="fa fa-user-plus" aria-hidden="true"></i></a>
+            &nbsp;&nbsp;
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="goToChat()" class="fa fa-weixin" aria-hidden="true"></i></a>
+            &nbsp;&nbsp;
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="goToFriends()" class="fa fa-users" aria-hidden="true"></i></a>
+            &nbsp;&nbsp;
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="settings()" style="padding-bottom: 3px; border-bottom: 1px solid white;" class="fa fa-cog" aria-hidden="true"></i></a>
+            &nbsp;&nbsp;
+            <a href="" tabindex="-1" style="color: white;"><i ng-click="logout()" class="fa fa-sign-out" aria-hidden="true"></i></a>
+        </span>
     </div>
+    <b Style="margin-top: 10px; margin-left: 90px;">Settings</b>
     <div class="panel-body" style="max-height:300px; overflow-y: auto;">
         <div class="row">
             <div class="col-md-4 text-center">
@@ -24,15 +31,6 @@
                 </a>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <a class="text-center">
-                    <button ng-click="deleteAccount()" type="button" class="btn btn-default navbar-btn">Delete account
-                    </button>
-                </a>
-            </div>
-        </div>
-
     </div>
 </div>
 

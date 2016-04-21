@@ -69,8 +69,8 @@ myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $sc
             $scope.error = false;
             $scope.$apply();
             $location.path('/friends');
-        } else if (authData) {
-            $location.path('/friends');
+        } else {
+            $location.path('/login');
         }
     });
 
@@ -176,8 +176,7 @@ myApp.controller("ForgotPasswordCtrl", function (firebaseService, $scope, $locat
 myApp.controller("LoginCtrl", function (firebaseService, $scope, $location) {
     if (firebaseService.getFirebaseInstance().getAuth() != null) {
         $location.path('/friends');
-    }
-    ;
+    };
 
     $scope.goToLogin = function () {
         $location.path('/existingAccount');
@@ -392,7 +391,6 @@ myApp.controller("FriendsCtrl", function ($anchorScroll, $firebaseObject, fireba
     };
 
     $scope.goToChat = function () {
-        console.log("called" + window.location.pathname);
         $location.path('/chat');
     };
 

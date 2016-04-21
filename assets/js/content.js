@@ -49,28 +49,30 @@ myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $sc
     var username = "";
 
     auth.$onAuth(function (authData) {
-        var publicInfo = {};
-        publicInfo.status = true;
-        publicInfo.watching = "";
-        publicInfo.time = "";
+        if (username !== "") {
+            var publicInfo = {};
+            publicInfo.status = true;
+            publicInfo.watching = "";
+            publicInfo.time = "";
 
-        if (authData) {
-            firebaseService.getFirebaseInstance().child("users").child(authData.uid).set({
-                provider: authData.provider,
-                name: authData.password.email,
-                username: username,
-                profilePic: authData.password.profileImageURL,
-                public: publicInfo,
-                friends: {},
-                conversations: {},
-                requests: {}
-            });
-            $scope.loading = false;
-            $scope.error = false;
-            $scope.$apply();
-            $location.path('/friends');
-        } else {
-            $location.path('/login');
+            if (authData) {
+                firebaseService.getFirebaseInstance().child("users").child(authData.uid).set({
+                    provider: authData.provider,
+                    name: authData.password.email,
+                    username: username,
+                    profilePic: authData.password.profileImageURL,
+                    public: publicInfo,
+                    friends: {},
+                    conversations: {},
+                    requests: {}
+                });
+                $scope.loading = false;
+                $scope.error = false;
+                $scope.$apply();
+                $location.path('/friends');
+            } else if (authData) {
+                $location.path('/friends');
+            }
         }
     });
 
@@ -99,15 +101,11 @@ myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $sc
                         $scope.loading = false;
                         console.log("Login Failed!", error);
                     } else {
-                        console.log("called");
+                        console.log("Login successful.");
                     }
                 });
             }
         });
-    };
-
-    $scope.cancel = function () {
-        $location.path('/login');
     };
 });
 
@@ -176,15 +174,7 @@ myApp.controller("ForgotPasswordCtrl", function (firebaseService, $scope, $locat
 myApp.controller("LoginCtrl", function (firebaseService, $scope, $location) {
     if (firebaseService.getFirebaseInstance().getAuth() != null) {
         $location.path('/friends');
-    };
-
-    $scope.goToLogin = function () {
-        $location.path('/existingAccount');
-    };
-
-    $scope.goToNewAccount = function () {
-        $location.path('/newAccount');
-    };
+    }
 });
 
 myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebaseObject, firebaseService, $scope, $location) {
@@ -564,6 +554,7 @@ myApp.controller("AddFriendCtrl", function (firebaseService, $scope, $location) 
     };
 
     $scope.logout = function () {
+        console.log("Called");
         firebaseService.logout();
         $location.path('/login');
     };

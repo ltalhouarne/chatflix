@@ -107,6 +107,10 @@ myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $sc
             }
         });
     };
+
+    $scope.cancel = function () {
+        $location.path('/login');
+    };
 });
 
 myApp.controller("ExistingAccountCtrl", function ($firebaseAuth, firebaseService, $scope, $location) {

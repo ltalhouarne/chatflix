@@ -2,15 +2,18 @@
     <div class="panel-heading" style="color: white; font-weight: 100; margin-bottom: 5px;">
         Chatflix
         <span style="float:right;">
-            <a href="javascript:void(0)" tabindex="-1" style="color: white;"><i ng-click="addFriend()" class="fa fa-user-plus" aria-hidden="true"></i></a>
+            <a style="color: white;"><i ng-click="addFriend()" class="fa fa-user-plus" aria-hidden="true"></i></a>
             &nbsp;&nbsp;
-            <a href="javascript:void(0)" tabindex="-1" style="color: white;"><i ng-click="goToChat()" class="fa fa-weixin" aria-hidden="true"></i></a>
+            <a tabindex="-1" style="color: white;"><i ng-click="goToChat()" class="fa fa-weixin" aria-hidden="true"></i></a>
             &nbsp;&nbsp;
-            <a href="javascript:void(0)" tabindex="-1" style="color: white;"><i ng-click="goToFriends()" style="padding-bottom: 3px; border-bottom: 1px solid white;" class="fa fa-users" aria-hidden="true"></i></a>
+            <a tabindex="-1" style="color: white;"><i ng-click="goToFriends()"
+                                                      style="padding-bottom: 3px; border-bottom: 1px solid white;"
+                                                      class="fa fa-users" aria-hidden="true"></i></a>
             &nbsp;&nbsp;
-            <a href="javascript:void(0)" tabindex="-1" style="color: white;"><i ng-click="settings()" class="fa fa-cog" aria-hidden="true"></i></a>
+            <a tabindex="-1" style="color: white;"><i ng-click="settings()" class="fa fa-cog"
+                                                      aria-hidden="true"></i></a>
             &nbsp;&nbsp;
-            <a href="javascript:void(0)" tabindex="-1" style="color: white;"><i ng-click="logout()" class="fa fa-sign-out" aria-hidden="true"></i></a>
+            <a tabindex="-1" style="color: white;"><i ng-click="logout()" class="fa fa-sign-out" aria-hidden="true"></i></a>
         </span>
     </div>
     <div class="panel-body" style="max-height:300px; overflow-y: auto; word-break:break-all;">
@@ -21,22 +24,21 @@
             </div>
             <br ng-show="emptyResult">
             <i style="font-family:Verdana; font-size: 80%; margin-left: 20px;" ng-show="emptyResult">You haven't added any friends yet.</i>
-            <li class="media" ng-repeat="(key, data) in friends" style="font-family:Verdana; margin-bottom: 10px;">
-                <div class="media-body" ng-repeat="friend in data">
-                    <div class="media" ng-show="friend.username" ng-click="chatWithFriend(key)">
+            <li class="media-body" ng-repeat="(key, data) in friends"
+                style="font-family:Verdana; margin-bottom: 10px; margin-top: 10px;">
+                <div class="media" ng-show="data.username" ng-click="chatWithFriend(key)">
                         <a class="pull-left">
                             <img class="media-object img-circle" style="width: 30px;"
-                                 ng-src="{{friend.profilePic}}"/>
+                                 ng-src="{{data.profilePic}}"/>
                         </a>
                         <div class="media-body" style="font-size: 80%;">
-                            <b>{{friend.username}}</b>
+                            <b>{{data.username}}</b>
                             <br/>
                             <small class="text-muted"><i class="fa fa-circle" aria-hidden="true" style="color: #0C0;">
-                            </i> Watching: {{friend.watching}}
+                            </i> Watching: {{data.watching}}
                             </small>
                         </div>
                     </div>
-                </div>
             </li>
         </ul>
     </div>

@@ -41,67 +41,88 @@ myApp.config(['$routeProvider',
     }]);
 
 myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $scope, $location) {
-    var auth = $firebaseAuth(firebaseService.getFirebaseInstance());
-
     $scope.error = false;
     $scope.loading = false;
 
-    var username = "";
-
-    auth.$onAuth(function (authData) {
-        if (username !== "") {
-            var publicInfo = {};
-            publicInfo.status = true;
-            publicInfo.watching = "";
-            publicInfo.time = "";
-
-            if (authData) {
-                firebaseService.getFirebaseInstance().child("users").child(authData.uid).set({
-                    provider: authData.provider,
-                    name: authData.password.email,
-                    username: username,
-                    profilePic: authData.password.profileImageURL,
-                    public: publicInfo,
-                    friends: {},
-                    conversations: {},
-                    requests: {}
-                });
-                $scope.loading = false;
-                $scope.error = false;
-                $scope.$apply();
-                $location.path('/friends');
-            } else if (authData) {
-                $location.path('/friends');
-            }
-        }
-    });
-
     $scope.create = function (user) {
-        username = user.new.username;
-
         $scope.loading = true;
+
         firebaseService.getFirebaseInstance().createUser({
             email: user.new.email,
             password: user.new.password
-        }, function (error) {
+        }, function (error, userData) {
             if (error) {
+                switch (error.code) {
+                    case "EMAIL_TAKEN":
+                        console.log("The new user account cannot be created because the email is already in use.");
+                        break;
+                    case "INVALID_EMAIL":
+                        console.log("The specified email is not a valid email.");
+                        break;
+                    default:
+                        console.log("Error creating user:", error);
+                }
                 $scope.loading = false;
                 $scope.error = true;
                 $scope.$apply();
-                console.log("Error creating user:", error);
             } else {
                 $scope.error = false;
                 $scope.$apply();
+                var _authData;
                 console.log("User created succesfully.");
+
                 firebaseService.getFirebaseInstance().authWithPassword({
                     email: user.new.email,
                     password: user.new.password
                 }, function (error, authData) {
                     if (error) {
                         $scope.loading = false;
+                        $scope.error = true;
                         console.log("Login Failed!", error);
                     } else {
+                        $scope.loading = false;
+                        $scope.error = false;
+                        $scope.$apply();
                         console.log("Login successful.");
+
+                        var publicInfo = {};
+                        publicInfo.status = true;
+                        publicInfo.watching = "";
+                        publicInfo.time = "";
+
+                        firebaseService.getFirebaseInstance().child("users").child(authData.uid).set({
+                            name: authData.password.email,
+                            username: user.new.username,
+                            profilePic: authData.password.profileImageURL,
+                            public: publicInfo
+                        }, function (error) {
+                            if (error) {
+                                firebaseService.logout();
+                                $scope.loading = false;
+                                $scope.error = true;
+                                $scope.$apply();
+                                console.log("Error creating user object.", error);
+                            } else {
+                                firebaseService.getFirebaseInstance().child("usernames").child(user.new.username).set({
+                                    value: user.new.username,
+                                    profilePic: authData.password.profileImageURL,
+                                    uid: authData.uid
+                                }, function (error) {
+                                    if (error) {
+                                        console.log("here");
+                                        firebaseService.logout();
+                                        $scope.loading = false;
+                                        $scope.error = true;
+                                        $scope.$apply();
+                                        console.log("Error creating username object.", error);
+                                    } else {
+                                        console.log("no errors");
+                                        $location.path('/friends');
+                                        if (!$scope.$$phase) $scope.$apply();
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
@@ -182,6 +203,8 @@ myApp.controller("LoginCtrl", function (firebaseService, $scope, $location) {
 });
 
 myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebaseObject, firebaseService, $scope, $location) {
+    $scope.emptyResult = true;
+
     if($route.current.params.friendid) {
         firebaseService.getFirebaseInstance().child('users')
             .child(firebaseService.getFirebaseInstance().getAuth().uid)
@@ -190,34 +213,28 @@ myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebas
             .once('value', function (returnedValue) {
                 if (returnedValue.val()) {
                     $scope.result = returnedValue.val();
+                    $scope.profilePicNS = $scope.result.profilePic;
                 } else {
                     console.log("error");
                     $scope.error = true;
                 }
             });
+
+        $scope.conversations = $firebaseObject(firebaseService.getFirebaseInstance().child('users')
+            .child(firebaseService.getFirebaseInstance().getAuth().uid)
+            .child('conversations')
+            .child($route.current.params.friendid));
+
+        $scope.conversations.$loaded().then(function () {
+            console.log($scope.conversations);
+            $scope.emptyResult = $scope.conversations.$value === null && $scope.conversations.$value !== undefined;
+            $scope.loading = false;
+        });
     }
 
     $scope.loading = true;
-    $scope.emptyResult = false;
 
     $scope.profilePicS = firebaseService.getProfilePicture();
-
-    if($scope.result) {
-        for (var key in $scope.result) {
-            if ($scope.result.hasOwnProperty(key)) {
-                $scope.profilePicNS = $scope.result[key].profilePic;
-            }
-        }
-    }
-
-    $scope.conversations = $firebaseObject(firebaseService.getFirebaseInstance().child('users')
-        .child(firebaseService.getFirebaseInstance().getAuth().uid)
-        .child('conversations'));
-
-    $scope.conversations.$loaded().then(function () {
-        $scope.emptyResult = $scope.conversations.$value === null && $scope.conversations.$value !== undefined;
-        $scope.loading = false;
-    });
 
     function formatAMPM(date) {
         var hours = date.getHours();
@@ -289,6 +306,10 @@ myApp.controller("ChatCtrl", function ($route, $anchorScroll, $firebaseObject, $
         .child('friends'));
 
     $scope.friends.$loaded().then(function () {
+        angular.forEach($scope.friends, function (value) {
+            console.log(value);
+        });
+        
         for (var key in $scope.friends[0]) {
             if($scope.friends[0][key] !== undefined && $scope.friends[0][key] !== null){
                 if($scope.friends[0][key].profilePic){
@@ -496,8 +517,8 @@ myApp.controller("AddFriendCtrl", function (firebaseService, $scope, $location) 
         $scope.success = false;
         $scope.result = "";
         if (username) {
-            firebaseService.getFirebaseInstance().child('users')
-                .orderByChild("username")
+            firebaseService.getFirebaseInstance().child('usernames')
+                .orderByChild("value")
                 .equalTo(username.trim())
                 .once('value', function (returnedValue) {
                     if (returnedValue.val()) {
@@ -524,7 +545,7 @@ myApp.controller("AddFriendCtrl", function (firebaseService, $scope, $location) 
             .child(firebaseService.getFirebaseInstance().getAuth().uid)
             .child('friends')
             .child(key)
-            .push(friend, function (error, authData) {
+            .set(friend, function (error) {
             if (error) {
                 $scope.loading = false;
                 $scope.error = true;

@@ -38,7 +38,8 @@
                                             <b>{{data.username}}</b>
                                     <br/>
                                     <small class="text-muted">
-                                          {{data.message | limitTo: 25}} ...
+                                          <i>{{data.message | limitTo: 25}}</i> <span
+                                            ng-show="data.message.length > 20"> ...</span>
                                     </small>
                                 </div>
                             </div>

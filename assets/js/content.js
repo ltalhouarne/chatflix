@@ -204,6 +204,7 @@ myApp.controller("LoginCtrl", function (firebaseService, $scope, $location) {
 
 myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebaseObject, firebaseService, $scope, $location) {
     $scope.emptyResult = true;
+    $scope.error = false;
 
     if($route.current.params.friendid) {
         firebaseService.getFirebaseInstance().child('users')
@@ -257,19 +258,23 @@ myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebas
 
         $scope.message.content = "";
 
-        message.self = true;
-        firebaseService.getFirebaseInstance().child('users')
-            .child(firebaseService.getFirebaseInstance().getAuth().uid)
-            .child('conversations')
-            .child($route.current.params.friendid)
-            .push(message);
-
         message.self = false;
         firebaseService.getFirebaseInstance().child('users')
             .child($route.current.params.friendid)
             .child('conversations')
             .child(firebaseService.getFirebaseInstance().getAuth().uid)
-            .push(message);
+            .push(message, function (error) {
+                if (error) {
+                    $scope.error = true;
+                } else {
+                    message.self = true;
+                    firebaseService.getFirebaseInstance().child('users')
+                        .child(firebaseService.getFirebaseInstance().getAuth().uid)
+                        .child('conversations')
+                        .child($route.current.params.friendid)
+                        .push(message);
+                }
+            });
     };
 
     $scope.logout = function () {
@@ -299,6 +304,7 @@ myApp.controller("ChatCtrl", function ($route, $anchorScroll, $firebaseObject, $
     $scope.emptyResult = false;
 
     $scope.friendsWithProfilePictures = [];
+    $scope.conversations = [];
 
     $scope.friends = $firebaseArray(firebaseService.getFirebaseInstance()
         .child('users')
@@ -307,22 +313,12 @@ myApp.controller("ChatCtrl", function ($route, $anchorScroll, $firebaseObject, $
 
     $scope.friends.$loaded().then(function () {
         angular.forEach($scope.friends, function (value) {
-            console.log(value);
+            var friend = {};
+            friend.profilePic = value.profilePic;
+            friend.username = value.username;
+            friend.id = value.$id;
+            $scope.friendsWithProfilePictures.push(friend);
         });
-        
-        for (var key in $scope.friends[0]) {
-            if($scope.friends[0][key] !== undefined && $scope.friends[0][key] !== null){
-                if($scope.friends[0][key].profilePic){
-                    var friend = {};
-                    friend.profilePic = $scope.friends[0][key].profilePic;
-                    friend.username = $scope.friends[0][key].username;
-                    friend.id = $scope.friends[0].$id;
-                    $scope.friendsWithProfilePictures.push(friend);
-                }
-            }
-        }
-
-        $scope.conversations = [];
 
         if($scope.friendsWithProfilePictures.length != 0){
             angular.forEach($scope.friendsWithProfilePictures, function(value){
@@ -332,14 +328,20 @@ myApp.controller("ChatCtrl", function ($route, $anchorScroll, $firebaseObject, $
                     .child(firebaseService.getFirebaseInstance().getAuth().uid)
                     .child('conversations')
                     .child(value.id)
-                    .limitToLast(1));
+                    .limitToLast(2));
 
                 lastMessage.message.$loaded().then(function(){
-                    lastMessage.message = lastMessage.message[0].value;
-                    lastMessage.profilePic = value.profilePic;
-                    lastMessage.username = value.username;
-                    lastMessage.id = value.id;
-                    $scope.conversations.push(lastMessage);
+                    if (!(lastMessage.message[0].value == "[]{}[]{}[]--" && !lastMessage.message[1].value)) {
+                        if (lastMessage.message[0].value == "[]{}[]{}[]--") {
+                            lastMessage.message = lastMessage.message[1].value;
+                        } else {
+                            lastMessage.message = lastMessage.message[0].value;
+                        }
+                        lastMessage.profilePic = value.profilePic;
+                        lastMessage.username = value.username;
+                        lastMessage.id = value.id;
+                        $scope.conversations.push(lastMessage);
+                    }
                 });
             });
         }

@@ -32,7 +32,7 @@
                             <b style="font-family:Verdana;">{{result.username}}</b>
                             <br/>
                             <small class="text-muted"><i class="fa fa-circle" aria-hidden="true" style="color: #0C0;">
-                            </i> Watching: {{result.watching}}
+                            </i> <span style="font-family:Verdana;">Watching: {{result.watching}}</span>
                             </small>
                         </div>
                             <button ng-click="goToChat()" class="btn btn-default pull-right" style="margin-top: -30px;">
@@ -45,23 +45,33 @@
             </li>
             <li class="media-body" ng-repeat="(key, convo) in conversations" style="font-family:Verdana;">
                 <div class="media" ng-show="convo.value">
-                    <a class="pull-left" ng-show="convo.self">
+                    <div ng-show="convo.value == '[]{}[]{}[]--'" class="media-body"
+                         style="font-size: 80%; margin-left: 50px; margin-bottom: 5px; margin-top: 5px;"
+                         ng-show="convo.self">
+                        <i>Friendship Accepted. <i class="fa fa-hand-peace-o fa-lg" style="margin-bottom: 10px;"
+                                                   aria-hidden="true"></i></i>
+                        <br/>
+                    </div>
+                    <a class="pull-left" ng-show="convo.self && convo.value != '[]{}[]{}[]--'">
                         <img class="media-object img-circle" style="width: 30px; margin-bottom: 5px;"
                              ng-src="{{profilePicS}}"/>
                     </a>
-                    <div class="media-body" style="font-size: 80%;" ng-show="convo.self">
+                    <div class="media-body" style="font-size: 80%; max-width: 180px; margin-bottom: 5px;"
+                         ng-show="convo.self && convo.value != '[]{}[]{}[]--'">
                         {{convo.value}}
                         <br/>
                         <small class="text-muted">{{convo.timestamp}}</small>
                     </div>
 
                         <span class="pull-right">
-                            <div style="font-size: 80%; margin-right:5px; float:left;" ng-show="!convo.self">
+                            <div style="font-size: 80%; margin-right:5px; margin-bottom: 5px; max-width: 180px; float:left;"
+                                 ng-show="!convo.self && convo.value != '[]{}[]{}[]--'">
                                 {{convo.value}}
                                 <br/>
                                 <small class="text-muted">{{convo.timestamp}}</small>
                             </div>
-                            <div class="media-body" ng-show="!convo.self" style="float:right">
+                            <div class="media-body" ng-show="!convo.self && convo.value != '[]{}[]{}[]--'"
+                                 style="float:right">
                                 <img class="media-object img-circle"
                                      style="width: 30px; margin-left: 5px; margin-bottom: 5px;"
                                      ng-src="{{profilePicNS}}"/>
@@ -75,7 +85,7 @@
     <div class="panel-footer" d>
         <form ng-submit="sendMessage()">
             <input style="font-family:Verdana;" ng-model="message.content" type="text" class="form-control"
-                   style="witdh: auto; font-size: 80%"
+                   style="witdh: auto; font-size: 70%"
                    placeholder="..." autofocus/>
         </form>
     </div>

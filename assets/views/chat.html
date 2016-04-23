@@ -26,7 +26,7 @@
                 <img src="assets/img/box.gif"/>
             </div>
             <span ng-repeat="data in conversations" style="font-family:Verdana;">
-                    <li class="media" style="margin-top: 10px;" ng-click="chatWithFriend(data.id)">
+                    <li class="media" style="margin-top: 10px;" ng-click="chatWithFriend(data.id)" ng-show="data.message !== '[]{}[]{}[]--'">
                         <div class="media-body">
                             <div class="media">
                                 <a class="pull-left">

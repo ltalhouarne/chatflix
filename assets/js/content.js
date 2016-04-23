@@ -3,10 +3,10 @@ var myApp = angular.module('Chatflix', ["firebase", "ngRoute"]);
 myApp.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider
-        .when('/chat', {
-            templateUrl: 'assets/views/chat.html',
-            controller: 'ChatCtrl'
-        }).when('/friends', {
+            .when('/chat', {
+                templateUrl: 'assets/views/chat.html',
+                controller: 'ChatCtrl'
+            }).when('/friends', {
             templateUrl: 'assets/views/friends.html',
             controller: 'FriendsCtrl'
         }).when('/chat/:friendid', {
@@ -206,7 +206,7 @@ myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebas
     $scope.emptyResult = true;
     $scope.error = false;
 
-    if($route.current.params.friendid) {
+    if ($route.current.params.friendid) {
         firebaseService.getFirebaseInstance().child('users')
             .child(firebaseService.getFirebaseInstance().getAuth().uid)
             .child("friends")
@@ -243,7 +243,7 @@ myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebas
         var ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0'+minutes : minutes;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
     }
@@ -253,7 +253,7 @@ myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebas
 
         var date = new Date();
 
-        message.timestamp = formatAMPM(date) + " on " + ('0' + date.getDate()).slice(-2) + "/" + ('0' + (date.getMonth()+1)).slice(-2);
+        message.timestamp = formatAMPM(date) + " on " + ('0' + date.getDate()).slice(-2) + "/" + ('0' + (date.getMonth() + 1)).slice(-2);
         message.value = $scope.message.content;
 
         $scope.message.content = "";
@@ -320,28 +320,22 @@ myApp.controller("ChatCtrl", function ($route, $anchorScroll, $firebaseObject, $
             $scope.friendsWithProfilePictures.push(friend);
         });
 
-        if($scope.friendsWithProfilePictures.length != 0){
-            angular.forEach($scope.friendsWithProfilePictures, function(value){
+        if ($scope.friendsWithProfilePictures.length != 0) {
+            angular.forEach($scope.friendsWithProfilePictures, function (value) {
                 var lastMessage = {};
 
                 lastMessage.message = $firebaseArray(firebaseService.getFirebaseInstance().child('users')
                     .child(firebaseService.getFirebaseInstance().getAuth().uid)
                     .child('conversations')
                     .child(value.id)
-                    .limitToLast(2));
+                    .limitToLast(1));
 
-                lastMessage.message.$loaded().then(function(){
-                    if (!(lastMessage.message[0].value == "[]{}[]{}[]--" && !lastMessage.message[1].value)) {
-                        if (lastMessage.message[0].value == "[]{}[]{}[]--") {
-                            lastMessage.message = lastMessage.message[1].value;
-                        } else {
-                            lastMessage.message = lastMessage.message[0].value;
-                        }
-                        lastMessage.profilePic = value.profilePic;
-                        lastMessage.username = value.username;
-                        lastMessage.id = value.id;
-                        $scope.conversations.push(lastMessage);
-                    }
+                lastMessage.message.$loaded().then(function () {
+                    lastMessage.message = lastMessage.message[0].value;
+                    lastMessage.profilePic = value.profilePic;
+                    lastMessage.username = value.username;
+                    lastMessage.id = value.id;
+                    $scope.conversations.push(lastMessage);
                 });
             });
         }
@@ -387,11 +381,79 @@ myApp.controller("FriendsCtrl", function ($anchorScroll, $firebaseObject, fireba
 
     $scope.loading = true;
     $scope.emptyResult = false;
+    $scope.noRequests = true;
+
+    var _uid = firebaseService.getFirebaseInstance().getAuth().uid;
+
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
 
     $scope.friends = $firebaseObject(firebaseService.getFirebaseInstance()
         .child('users')
-        .child(firebaseService.getFirebaseInstance().getAuth().uid)
+        .child(_uid)
         .child('friends'));
+
+    firebaseService.getFirebaseInstance().child('users')
+        .child(_uid)
+        .child('requests')
+        .orderByChild('accepted')
+        .equalTo(false)
+        .once('value', function (returnedValue) {
+            if (returnedValue.val()) {
+                $scope.requests = returnedValue.val();
+                $scope.$apply();
+            } else {
+                $scope.error = true;
+                $scope.$apply();
+            }
+        });
+
+    $scope.acceptFriendship = function(request){
+        request.accepted = true;
+        firebaseService.getFirebaseInstance().child('users')
+            .child(_uid)
+            .child('requests')
+            .child(request.uid)
+            .set(request, function (error) {
+                if (error) {
+                    $scope.loading = false;
+                    $scope.error = true;
+                    $scope.success = false;
+                    $scope.$apply();
+                    console.log("Creating request for friend failed!", error);
+                } else {
+                    $scope.error = false;
+                    $scope.loading = false;
+                    $scope.success = true;
+                    $scope.$apply();
+
+                    console.log("Accepted friendship successfully.");
+
+                    message.timestamp = formatAMPM(date) + " on " + ('0' + date.getDate()).slice(-2) + "/" + ('0' + (date.getMonth() + 1)).slice(-2);
+                    message.value = "[]{}[]{}[]--";
+                    message.self = false;
+                    firebaseService.getFirebaseInstance().child('users')
+                        .child(request.uid)
+                        .child('conversations')
+                        .child(_uidd)
+                        .push(message, function (error) {
+                            if (error) {
+                                $scope.error = true;
+                            } else {
+                                $scope.error = false;
+                            }
+                        });
+                }
+            });
+    };
 
     $scope.friends.$loaded().then(function () {
         $scope.emptyResult = $scope.friends.$value === null && $scope.friends.$value !== undefined;
@@ -548,20 +610,49 @@ myApp.controller("AddFriendCtrl", function (firebaseService, $scope, $location) 
             .child('friends')
             .child(key)
             .set(friend, function (error) {
-            if (error) {
-                $scope.loading = false;
-                $scope.error = true;
-                $scope.success = false;
-                $scope.$apply();
-                console.log("Adding a friend failed!", error);
-            } else {
-                $scope.error = false;
-                $scope.loading = false;
-                $scope.success = true;
-                $scope.$apply();
-                console.log("Added friend successfully.");
-            }
-        });
+                if (error) {
+                    $scope.loading = false;
+                    $scope.error = true;
+                    $scope.success = false;
+                    $scope.$apply();
+                    console.log("Adding a friend failed!", error);
+                } else {
+                    var request = {};
+                    var _uid = firebaseService.getFirebaseInstance().getAuth().uid;
+
+                    firebaseService.getFirebaseInstance()
+                        .child('users')
+                        .child(_uid)
+                        .orderByChild('username')
+                        .on('value', function (returnedValue) {
+                            if (returnedValue.val()) {
+                                request.uid = _uid;
+                                request.profilePic = returnedValue.val().profilePic;
+                                request.username = returnedValue.val().username;
+                                request.accepted = false;
+                                firebaseService.getFirebaseInstance().child('users')
+                                    .child(key)
+                                    .child('requests')
+                                    .child(_uid)
+                                    .set(request, function (error) {
+                                        if (error) {
+                                            $scope.loading = false;
+                                            $scope.error = true;
+                                            $scope.success = false;
+                                            $scope.$apply();
+                                            console.log("Creating request for friend failed!", error);
+                                        } else {
+                                            $scope.error = false;
+                                            $scope.loading = false;
+                                            $scope.success = true;
+                                            $scope.$apply();
+                                            console.log("Added friend successfully.");
+                                        }
+                                    });
+                            }
+                        });
+                }
+            });
     };
 
     $scope.cancel = function () {

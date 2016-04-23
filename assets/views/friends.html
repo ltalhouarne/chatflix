@@ -18,7 +18,30 @@
     </div>
     <div class="panel-body" style="max-height:300px; overflow-y: auto; word-break:break-all;">
         <ul class="media-list">
-            <b style="margin-left: 70px;">Friends List</b>
+            {{requests}}
+            <span ng-show="requests">
+            <b style="margin-left: 55px;">Friend Requests</b>
+                <li class="media-body" ng-repeat="(key, data) in requests" style="font-family:Verdana;" ng-class="{ 'toppy':$first}">
+                    <div class="media" ng-show="!data.accepted">
+                        <a class="pull-left">
+                            <img class="media-object img-circle" style="width: 30px;"
+                                 ng-src="{{data.profilePic}}"/>
+                        </a>
+                        <div class="media-body" style="font-size: 80%;">
+                            <b style="margin-top: 5px;">{{data.username}}</b>
+                            <span style="float:right; margin-top: -8px;">
+                                    <button ng-click="acceptFriendship(data)" type="button"
+                                            class="text-right btn btn-default navbar-btn">
+                                        Accept
+                                    </button>
+                            </span>
+                        </div>
+                    </div>
+                </li>
+                <hr>
+            </span>
+
+            <b style="margin-left: 70px; margin-top: -10px;">Friends List</b>
             <div ng-show="loading" class="text-center">
                 <img src="assets/img/box.gif"/>
             </div>

@@ -18,8 +18,7 @@
     </div>
     <div class="panel-body" style="max-height:300px; overflow-y: auto; word-break:break-all;">
         <ul class="media-list">
-            {{requests}}
-            <span ng-show="requests">
+            <span ng-show="!noRequests">
             <b style="margin-left: 55px;">Friend Requests</b>
                 <li class="media-body" ng-repeat="(key, data) in requests" style="font-family:Verdana;" ng-class="{ 'toppy':$first}">
                     <div class="media" ng-show="!data.accepted">

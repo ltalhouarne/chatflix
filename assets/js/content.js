@@ -1,4 +1,4 @@
-var myApp = angular.module('Chatflix', ["firebase", "ngRoute"]);
+var myApp = angular.module('Chatflix', ["firebase", "ngRoute", "luegg.directives"]);
 
 myApp.config(['$routeProvider',
     function ($routeProvider) {
@@ -64,10 +64,10 @@ myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $sc
                 }
                 $scope.loading = false;
                 $scope.error = true;
-                $scope.$apply();
+                if (!$scope.$$phase) $scope.$apply();
             } else {
                 $scope.error = false;
-                $scope.$apply();
+                if (!$scope.$$phase) $scope.$apply();
                 var _authData;
                 console.log("User created succesfully.");
 
@@ -82,7 +82,7 @@ myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $sc
                     } else {
                         $scope.loading = false;
                         $scope.error = false;
-                        $scope.$apply();
+                        if (!$scope.$$phase) $scope.$apply();
                         console.log("Login successful.");
 
                         var publicInfo = {};
@@ -100,7 +100,7 @@ myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $sc
                                 firebaseService.logout();
                                 $scope.loading = false;
                                 $scope.error = true;
-                                $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                                 console.log("Error creating user object.", error);
                             } else {
                                 firebaseService.getFirebaseInstance().child("usernames").child(user.new.username).set({
@@ -113,7 +113,7 @@ myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $sc
                                         firebaseService.logout();
                                         $scope.loading = false;
                                         $scope.error = true;
-                                        $scope.$apply();
+                                        if (!$scope.$$phase) $scope.$apply();
                                         console.log("Error creating username object.", error);
                                     } else {
                                         console.log("no errors");
@@ -144,7 +144,7 @@ myApp.controller("ExistingAccountCtrl", function ($firebaseAuth, firebaseService
         if (authData) {
             $scope.loading = false;
             $scope.error = false;
-            $scope.$apply();
+            if (!$scope.$$phase) $scope.$apply();
             $location.path('/friends');
         }
     });
@@ -159,11 +159,11 @@ myApp.controller("ExistingAccountCtrl", function ($firebaseAuth, firebaseService
             if (error) {
                 $scope.loading = false;
                 $scope.error = true;
-                $scope.$apply();
+                if (!$scope.$$phase) $scope.$apply();
                 console.log("Login Failed!", error);
             } else {
                 $scope.error = false;
-                $scope.$apply();
+                if (!$scope.$$phase) $scope.$apply();
                 console.log("Authenticated successfully.");
             }
         });
@@ -205,6 +205,7 @@ myApp.controller("LoginCtrl", function (firebaseService, $scope, $location) {
 myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebaseObject, firebaseService, $scope, $location) {
     $scope.emptyResult = true;
     $scope.error = false;
+    $scope.emoticons = false;
 
     if ($route.current.params.friendid) {
         firebaseService.getFirebaseInstance().child('users')
@@ -227,7 +228,6 @@ myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebas
             .child($route.current.params.friendid));
 
         $scope.conversations.$loaded().then(function () {
-            console.log($scope.conversations);
             $scope.emptyResult = $scope.conversations.$value === null && $scope.conversations.$value !== undefined;
             $scope.loading = false;
         });
@@ -248,7 +248,12 @@ myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebas
         return strTime;
     }
 
+    $scope.append = function (text) {
+        $scope.message.content = $scope.message.content + "&#" + text + ";";
+    };
+
     $scope.sendMessage = function () {
+        console.log(document.getElementById('messageToBeSent').value);
         var message = {};
 
         var date = new Date();
@@ -331,11 +336,13 @@ myApp.controller("ChatCtrl", function ($route, $anchorScroll, $firebaseObject, $
                     .limitToLast(1));
 
                 lastMessage.message.$loaded().then(function () {
-                    lastMessage.message = lastMessage.message[0].value;
-                    lastMessage.profilePic = value.profilePic;
-                    lastMessage.username = value.username;
-                    lastMessage.id = value.id;
-                    $scope.conversations.push(lastMessage);
+                    if (lastMessage.message[0]) {
+                        lastMessage.message = lastMessage.message[0].value;
+                        lastMessage.profilePic = value.profilePic;
+                        lastMessage.username = value.username;
+                        lastMessage.id = value.id;
+                        $scope.conversations.push(lastMessage);
+                    }
                 });
             });
         }
@@ -408,10 +415,11 @@ myApp.controller("FriendsCtrl", function ($anchorScroll, $firebaseObject, fireba
         .equalTo(false)
         .once('value', function (returnedValue) {
             if (returnedValue.val()) {
+                $scope.noRequests = false;
                 $scope.requests = returnedValue.val();
                 $scope.$apply();
             } else {
-                $scope.error = true;
+                $scope.noRequests = true;
                 $scope.$apply();
             }
         });
@@ -427,30 +435,59 @@ myApp.controller("FriendsCtrl", function ($anchorScroll, $firebaseObject, fireba
                     $scope.loading = false;
                     $scope.error = true;
                     $scope.success = false;
-                    $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                     console.log("Creating request for friend failed!", error);
                 } else {
                     $scope.error = false;
-                    $scope.loading = false;
-                    $scope.success = true;
-                    $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
 
-                    console.log("Accepted friendship successfully.");
+                    var friend = {};
+                    friend.profilePic = request.profilePic;
+                    friend.username = request.username;
 
-                    message.timestamp = formatAMPM(date) + " on " + ('0' + date.getDate()).slice(-2) + "/" + ('0' + (date.getMonth() + 1)).slice(-2);
-                    message.value = "[]{}[]{}[]--";
-                    message.self = false;
                     firebaseService.getFirebaseInstance().child('users')
+                        .child(firebaseService.getFirebaseInstance().getAuth().uid)
+                        .child('friends')
                         .child(request.uid)
-                        .child('conversations')
-                        .child(_uidd)
-                        .push(message, function (error) {
+                        .set(friend, function (error) {
                             if (error) {
+                                $scope.loading = false;
                                 $scope.error = true;
+                                $scope.success = false;
+                                if (!$scope.$$phase) $scope.$apply();
+                                console.log("Adding a friend failed!", error);
                             } else {
                                 $scope.error = false;
+                                $scope.success = true;
+
+                                if (!$scope.$$phase) $scope.$apply();
+
+                                console.log("Accepted friendship successfully.");
+
+                                var message = {};
+
+                                var date = new Date();
+
+                                message.timestamp = formatAMPM(date) + " on " + ('0' + date.getDate()).slice(-2) + "/" + ('0' + (date.getMonth() + 1)).slice(-2);
+                                message.value = "[]{}[]{}[]--";
+                                message.self = false;
+
+                                firebaseService.getFirebaseInstance().child('users')
+                                    .child(request.uid)
+                                    .child('conversations')
+                                    .child(_uid)
+                                    .push(message, function (error) {
+                                        if (error) {
+                                            $scope.error = true;
+                                        } else {
+                                            $scope.loading = false;
+                                            $scope.error = false;
+                                            if (!$scope.$$phase) $scope.$apply();
+                                        }
+                                    });
                             }
                         });
+
                 }
             });
     };
@@ -587,10 +624,10 @@ myApp.controller("AddFriendCtrl", function (firebaseService, $scope, $location) 
                 .once('value', function (returnedValue) {
                     if (returnedValue.val()) {
                         $scope.result = returnedValue.val();
-                        $scope.$apply();
+                        if (!$scope.$$phase) $scope.$apply();
                     } else {
                         $scope.error = true;
-                        $scope.$apply();
+                        if (!$scope.$$phase) $scope.$apply();
                     }
                 });
         }
@@ -614,7 +651,7 @@ myApp.controller("AddFriendCtrl", function (firebaseService, $scope, $location) 
                     $scope.loading = false;
                     $scope.error = true;
                     $scope.success = false;
-                    $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                     console.log("Adding a friend failed!", error);
                 } else {
                     var request = {};
@@ -639,13 +676,13 @@ myApp.controller("AddFriendCtrl", function (firebaseService, $scope, $location) 
                                             $scope.loading = false;
                                             $scope.error = true;
                                             $scope.success = false;
-                                            $scope.$apply();
+                                            if (!$scope.$$phase) $scope.$apply();
                                             console.log("Creating request for friend failed!", error);
                                         } else {
                                             $scope.error = false;
                                             $scope.loading = false;
                                             $scope.success = true;
-                                            $scope.$apply();
+                                            if (!$scope.$$phase) $scope.$apply();
                                             console.log("Added friend successfully.");
                                         }
                                     });

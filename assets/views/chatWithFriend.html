@@ -16,7 +16,7 @@
         </span>
     </div>
     <div class="panel-body"
-         style="max-height:300px; word-break:break-all; padding-top: 0px !important; overflow-y: auto;" scroll-glue>
+         style="max-height:300px; padding-top: 0px !important; overflow-y: auto; word-wrap: break-word" scroll-glue>
         <ul class="media-list">
             <div ng-show="loading" class="text-center">
                 <img src="assets/img/box.gif"/>
@@ -80,13 +80,36 @@
                 </div>
             </li>
         </ul>
-        <span id="bottom"></span>
     </div>
-    <div class="panel-footer" d>
+    <div class="panel-footer">
+        <div ng-show="emoticons" style="margin-bottom: 5px;">
+            <button style="outline: none; margin-left: 10px;" class="btn btn-default" ng-click="append(128512)"><span
+                    style="margin-left: -3px;">&#128512;</span></button>
+            <button style="outline: none" class="btn btn-default"><span style="margin-left: -3px;">&#128513;</span>
+            </button>
+            <button style="outline: none" class="btn btn-default"><span style="margin-left: -3px;">&#128514;</span>
+            </button>
+            <button style="outline: none" class="btn btn-default"><span style="margin-left: -3px;">&#128515;</span>
+            </button>
+            <button style="outline: none" class="btn btn-default"><span style="margin-left: -3px;">&#128516;</span>
+            </button>
+            <button style="outline: none; margin-left: 10px;" class="btn btn-default"><span style="margin-left: -3px;">&#128517;</span>
+            </button>
+            <button style="outline: none" class="btn btn-default"><span style="margin-left: -3px;">&#128518;</span>
+            </button>
+            <button style="outline: none" class="btn btn-default"><span style="margin-left: -3px;">&#128519;</span>
+            </button>
+            <button style="outline: none" class="btn btn-default"><span style="margin-left: -3px;">&#128520;</span>
+            </button>
+            <button style="outline: none" class="btn btn-default"><span style="margin-left: -3px;">&#128521;</span>
+            </button>
+        </div>
         <form ng-submit="sendMessage()">
-            <input style="font-family:Verdana;" ng-model="message.content" type="text" class="form-control"
-                   style="witdh: auto; font-size: 70%"
-                   placeholder="..." autofocus/>
+            <input id="messageToBeSent" style="font-family:Verdana; float:left; width:190px; font-size: 70%;"
+                   ng-model="message.content" type="text" class="form-control"
+                   autofocus/>
+            <button class="btn btn-default" style="outline: none; width: 20px;" type="button"><span
+                    style="margin-left: -9px;" ng-click="emoticons = !emoticons;">&#128512;</span></button>
         </form>
     </div>
 </div>

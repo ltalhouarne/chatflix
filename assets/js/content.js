@@ -1,44 +1,43 @@
 var myApp = angular.module('Chatflix', ["firebase", "ngRoute", "luegg.directives"]);
 
-myApp.config(['$routeProvider',
-    function ($routeProvider) {
-        $routeProvider
-            .when('/chat', {
-                templateUrl: 'assets/views/chat.html',
-                controller: 'ChatCtrl'
-            }).when('/friends', {
-            templateUrl: 'assets/views/friends.html',
-            controller: 'FriendsCtrl'
-        }).when('/chat/:friendid', {
-            templateUrl: 'assets/views/chatWithFriend.html',
-            controller: 'ChatWithFriendCtrl'
-        }).when('/newAccount', {
-            templateUrl: 'assets/views/subviews/newAccount.html',
-            controller: 'NewAccountCtrl'
-        }).when('/existingAccount', {
-            templateUrl: 'assets/views/subviews/existingAccount.html',
-            controller: 'ExistingAccountCtrl'
-        }).when('/settings', {
-            templateUrl: 'assets/views/settings.html',
-            controller: 'SettingsCtrl'
-        }).when('/forgotPassword', {
-            templateUrl: 'assets/views/subviews/forgotPassword.html',
-            controller: 'ForgotPasswordCtrl'
-        }).when('/emailChange', {
-            templateUrl: 'assets/views/subviews/emailChange.html',
-            controller: 'EmailChangeCtrl'
-        }).when('/passwordChange', {
-            templateUrl: 'assets/views/subviews/passwordChange.html',
-            controller: 'PasswordChangeCtrl'
-        }).when('/addFriend', {
-            templateUrl: 'assets/views/friendSearch.html',
-            controller: 'AddFriendCtrl'
-        }).otherwise({
-            redirectTo: '/login',
-            templateUrl: 'assets/views/login.html',
-            controller: 'LoginCtrl'
-        });
-    }]);
+myApp.config(['$routeProvider', function ($routeProvider) {
+    $routeProvider
+        .when('/chat', {
+            templateUrl: 'assets/views/chat.html',
+            controller: 'ChatCtrl'
+        }).when('/friends', {
+        templateUrl: 'assets/views/friends.html',
+        controller: 'FriendsCtrl'
+    }).when('/chat/:friendid', {
+        templateUrl: 'assets/views/chatWithFriend.html',
+        controller: 'ChatWithFriendCtrl'
+    }).when('/newAccount', {
+        templateUrl: 'assets/views/subviews/newAccount.html',
+        controller: 'NewAccountCtrl'
+    }).when('/existingAccount', {
+        templateUrl: 'assets/views/subviews/existingAccount.html',
+        controller: 'ExistingAccountCtrl'
+    }).when('/settings', {
+        templateUrl: 'assets/views/settings.html',
+        controller: 'SettingsCtrl'
+    }).when('/forgotPassword', {
+        templateUrl: 'assets/views/subviews/forgotPassword.html',
+        controller: 'ForgotPasswordCtrl'
+    }).when('/emailChange', {
+        templateUrl: 'assets/views/subviews/emailChange.html',
+        controller: 'EmailChangeCtrl'
+    }).when('/passwordChange', {
+        templateUrl: 'assets/views/subviews/passwordChange.html',
+        controller: 'PasswordChangeCtrl'
+    }).when('/addFriend', {
+        templateUrl: 'assets/views/friendSearch.html',
+        controller: 'AddFriendCtrl'
+    }).otherwise({
+        redirectTo: '/login',
+        templateUrl: 'assets/views/login.html',
+        controller: 'LoginCtrl'
+    });
+}]);
 
 myApp.controller("NewAccountCtrl", function ($firebaseAuth, firebaseService, $scope, $location) {
     $scope.error = false;
@@ -202,7 +201,7 @@ myApp.controller("LoginCtrl", function (firebaseService, $scope, $location) {
     }
 });
 
-myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebaseObject, firebaseService, $scope, $location) {
+myApp.controller("ChatWithFriendCtrl", function ($sce, $route, $anchorScroll, $firebaseObject, firebaseService, $scope, $location) {
     $scope.emptyResult = true;
     $scope.error = false;
     $scope.emoticons = false;
@@ -249,7 +248,58 @@ myApp.controller("ChatWithFriendCtrl", function ($route, $anchorScroll, $firebas
     }
 
     $scope.append = function (text) {
-        $scope.message.content = $scope.message.content + "&#" + text + ";";
+        if (text === 128522) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😊");
+        } else if (text === 128516) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😄");
+        } else if (text === 128515) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😄");
+        } else if (text === 128521) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😉");
+        } else if (text === 128525) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😍");
+        } else if (text === 128536) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😍");
+        } else if (text === 128538) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😚");
+        } else if (text === 128524) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😌");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😌");
+        } else if (text === 128540) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😜");
+        } else if (text === 128541) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128530) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        } else if (text === 128513) {
+            $scope.message.content = $scope.message.content + $sce.trustAsHtml("😁");
+        }
+        document.getElementById("messageToBeSent").focus();
     };
 
     $scope.sendMessage = function () {
@@ -385,12 +435,51 @@ myApp.controller("FriendsCtrl", function ($anchorScroll, $firebaseObject, fireba
     //         }
     //     }
     // });
+    var _uid = firebaseService.getFirebaseInstance().getAuth().uid;
+
+    chrome.windows.getAll({populate: true}, function (windows) {
+        windows.forEach(function (window) {
+            window.tabs.forEach(function (tab) {
+                if ((tab.url).indexOf("netflix.com") > 0) {
+                    console.log("Watching netflix");
+
+                    chrome.tabs.sendRequest(tab.id, {method: "getText"}, function(response) {
+                        console.log(response.data);
+                    });
+                    // firebaseService.getFirebaseInstance()
+                    //     .child('users')
+                    //     .child(_uid)
+                    //     .child('public')
+                    //     .orderByChild('watching')
+                    //     .once('value', function (returnedValue) {
+                    //         console.log("value returned:" + returnedValue);
+                    //         Object.keys(returnedValue).forEach(function(key) {
+                    //             console.log(key, returnedValue[key]);
+                    //         });
+                    //         if (returnedValue.val()) {
+                    //             if (returnedValue.val() != true) {
+                    //                 firebaseService.getFirebaseInstance().child('users')
+                    //                     .child(_uid)
+                    //                     .child('public')
+                    //                     .child('watching')
+                    //                     .set(true, function (error) {
+                    //                         if (error) {
+                    //                             console.log("error setting netflix.");
+                    //                         } else {
+                    //                             console.log("setting netflix successful.");
+                    //                         }
+                    //                     });
+                    //             }
+                    //         }
+                    //     });
+                }
+            });
+        });
+    });
 
     $scope.loading = true;
     $scope.emptyResult = false;
     $scope.noRequests = true;
-
-    var _uid = firebaseService.getFirebaseInstance().getAuth().uid;
 
     function formatAMPM(date) {
         var hours = date.getHours();
@@ -417,20 +506,20 @@ myApp.controller("FriendsCtrl", function ($anchorScroll, $firebaseObject, fireba
             if (returnedValue.val()) {
                 $scope.noRequests = false;
                 $scope.requests = returnedValue.val();
-                $scope.$apply();
+                if (!$scope.$$phase) $scope.$apply();
             } else {
                 $scope.noRequests = true;
-                $scope.$apply();
+                if (!$scope.$$phase) $scope.$apply();
             }
         });
 
-    $scope.acceptFriendship = function(request){
-        request.accepted = true;
+    $scope.acceptFriendship = function (request) {
         firebaseService.getFirebaseInstance().child('users')
             .child(_uid)
             .child('requests')
             .child(request.uid)
-            .set(request, function (error) {
+            .child('accepted')
+            .set(true, function (error) {
                 if (error) {
                     $scope.loading = false;
                     $scope.error = true;

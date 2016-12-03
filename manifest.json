@@ -13,6 +13,6 @@
     "js": [ "assets/lib/angular.min.js", "assets/lib/angularfire.min.js", "assets/lib/angular-route.min.js", "assets/lib/firebase.js", "assets/lib/scrollglue.js", "assets/js/content.js"],
     "matches": [ "*://*/*" ],
     "run_at": "document_start"
-  } ],
+  }],
   "permissions": [ "http://*/*", "https://*/*", "unlimitedStorage", "contextMenus", "cookies", "tabs", "notifications" ]
 }

@@ -19,8 +19,9 @@
     <div class="panel-body" style="max-height:300px; overflow-y: auto; word-break:break-all;">
         <ul class="media-list">
             <span ng-show="!noRequests">
-            <b style="margin-left: 55px;">Friend Requests</b>
                 <li class="media-body" ng-repeat="(key, data) in requests" style="font-family:Verdana;" ng-class="{ 'toppy':$first}">
+                    <span style="margin-left: 55px;" ng-show="$first">Friend Requests</span>
+
                     <div class="media" ng-show="!data.accepted">
                         <a class="pull-left">
                             <img class="media-object img-circle" style="width: 30px;"
@@ -57,7 +58,7 @@
                             <b>{{data.username}}</b>
                             <br/>
                             <small class="text-muted"><i class="fa fa-circle" aria-hidden="true" style="color: #0C0;">
-                            </i> Watching: {{data.watching}}
+                            </i> Watching: {{data.watching}}Game of thrones
                             </small>
                         </div>
                     </div>

@@ -1,5 +1,5 @@
 # chatflix
-Google chrome extension to chat with friends and sync to their Netflix shows.
+**Google chrome extension** to chat with friends and sync to their Netflix shows. Uses a **Firebase** database.
 
 App screenshots:
 
